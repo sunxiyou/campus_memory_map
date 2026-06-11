@@ -10,6 +10,8 @@ import { CAMPUS_AREAS, DATE_MAX, DATE_MIN, MAP_HEIGHT, MAP_WIDTH, MAX_IMAGE_BYTE
         const PlusIcon = (p) => <IconSVG {...p}><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></IconSVG>;
         const MinusIcon = (p) => <IconSVG {...p}><line x1="5" y1="12" x2="19" y2="12"/></IconSVG>;
         const XIcon = (p) => <IconSVG {...p}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></IconSVG>;
+        const ChevronLeftIcon = (p) => <IconSVG {...p}><path d="m15 18-6-6 6-6"/></IconSVG>;
+        const ChevronRightIcon = (p) => <IconSVG {...p}><path d="m9 18 6-6-6-6"/></IconSVG>;
         const CompassIcon = (p) => <IconSVG {...p}><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></IconSVG>;
         const SparklesIcon = (p) => <IconSVG {...p}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4M3 5h4"/></IconSVG>;
         const LeafIcon = (p) => <IconSVG {...p}><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></IconSVG>;
@@ -821,9 +823,12 @@ import { CAMPUS_AREAS, DATE_MAX, DATE_MIN, MAP_HEIGHT, MAP_WIDTH, MAX_IMAGE_BYTE
                     );
                 } else if (count <= 6) {
                     visual = (
-                        <div className={`w-10 h-10 rounded-full ${glassClass} flex items-center justify-center relative overflow-hidden`} style={{ animation: 'glow-shift 10s linear infinite' }}>
-                            <div className="absolute w-full h-full bg-pink-500/20 blur-md"></div>
-                            <FlowerIcon className="text-white w-5 h-5 relative z-10" />
+                        <div className={`w-11 h-11 rounded-full ${glassClass} flex items-center justify-center relative overflow-hidden`} style={{ animation: 'float 3.8s ease-in-out infinite' }}>
+                            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-fuchsia-200/30 via-violet-300/25 to-sky-200/30"></div>
+                            <div className="absolute inset-0 rounded-full bg-purple-200/10 blur-md"></div>
+                            <div className="absolute inset-0 border border-fuchsia-200/60 rounded-full" style={{ animation: 'orbit 5s linear infinite' }}></div>
+                            <div className="absolute inset-1 rounded-full border border-white/10"></div>
+                            <div className="w-4 h-4 rounded-full relative z-10 bg-gradient-to-br from-white via-fuchsia-200 to-violet-300" style={{ boxShadow: '0 0 18px rgba(216,180,254,0.95), 0 0 28px rgba(125,211,252,0.35)' }}></div>
                         </div>
                     );
                 } else {
@@ -1159,14 +1164,24 @@ import { CAMPUS_AREAS, DATE_MAX, DATE_MIN, MAP_HEIGHT, MAP_WIDTH, MAX_IMAGE_BYTE
                             <XIcon />
                         </button>
                         <h2 className="text-2xl font-light text-white mb-6 flex items-center gap-3">
-                            <BookIcon className="text-purple-400" /> 播种说明书
+                            播种说明书
                         </h2>
                         
                         <div className="flex-1 bg-black/20 border border-white/10 rounded-2xl shadow-inner flex items-center justify-center">
                             <div className="text-center space-y-4 opacity-50">
-                                <SparklesIcon className="w-10 h-10 mx-auto text-white" />
-                                <p className="text-white font-light tracking-wider">空间数字档案加载中...</p>
-                                <p className="text-white/60 text-sm">( 这里是后续放置介绍文字的空白区域 )</p>
+                               
+                                <p className=" breathing-text
+      text-sm md:text-3xl font-bold tracking-wide
+      text-transparent bg-clip-text
+      bg-gradient-to-r from-slate-100 via-cyan-200 to-sky-400
+      drop-shadow-[0_0_18px_rgba(56,189,248,0.35)]
+      select-none">这是一张留存你、我与南大鼓楼校区记忆的地图<br/><br/></p>
+                                <p className="text-white font-light tracking-wider">在对应的位置右击,即可播种记忆<br/>
+                                    你也可以选择种下与未来的对话，静待它的萌发<br/>
+                                    点击右侧“探索”图标，以卡牌翻阅每一处记忆<br/>
+                                    小蓝鲸会记住你的日程安排<br/><br/>让我们开始播种记忆地图吧！<br/>
+                                    </p>
+                                    
                             </div>
                         </div>
                     </div>
@@ -1616,6 +1631,7 @@ import { CAMPUS_AREAS, DATE_MAX, DATE_MIN, MAP_HEIGHT, MAP_WIDTH, MAX_IMAGE_BYTE
                 const [selectedAIs, setSelectedAIs] = useState(['ghost', 'roamer']);
                 const [viewScope, setViewScope] = useState('area');
                 const [selectedAreaId, setSelectedAreaId] = useState((CAMPUS_AREAS[0] || UNKNOWN_AREA).id);
+                const [activeMemoryIndex, setActiveMemoryIndex] = useState(0);
                 const [exploreMode, setExploreMode] = useState('companion');
                 const [aiResponses, setAiResponses] = useState([]);
                 const [aiLoading, setAiLoading] = useState(false);
@@ -1672,6 +1688,9 @@ import { CAMPUS_AREAS, DATE_MAX, DATE_MIN, MAP_HEIGHT, MAP_WIDTH, MAX_IMAGE_BYTE
                         tags: tags.size
                     };
                 }, [scopedMemories]);
+                const currentIndex = scopedMemories.length ? activeMemoryIndex % scopedMemories.length : 0;
+                const activeMemory = scopedMemories[currentIndex];
+                const stackedMemories = scopedMemories.filter((_, index) => index !== currentIndex).slice(0, 5);
 
                 const drawerTextClass = 'text-white';
                 const drawerSubTextClass = 'text-white/70';
@@ -1704,6 +1723,10 @@ import { CAMPUS_AREAS, DATE_MAX, DATE_MIN, MAP_HEIGHT, MAP_WIDTH, MAX_IMAGE_BYTE
                     if (!areaOptions.some(area => area.id === selectedAreaId)) setSelectedAreaId(firstAreaWithMemory.id);
                 }, [drawerOpen, selectedAreaId, areaCounts]);
 
+                useEffect(() => {
+                    setActiveMemoryIndex(0);
+                }, [viewScope, selectedAreaId, scopedMemories.length]);
+
                 const toggleAI = (id) => {
                     if (selectedAIs.includes(id)) setSelectedAIs(selectedAIs.filter(x => x !== id));
                     else if (selectedAIs.length < 3) setSelectedAIs([...selectedAIs, id]);
@@ -1720,7 +1743,7 @@ import { CAMPUS_AREAS, DATE_MAX, DATE_MIN, MAP_HEIGHT, MAP_WIDTH, MAX_IMAGE_BYTE
                 }, [chatMessages]);
 
                 useEffect(() => {
-                    if (!drawerOpen || exploreMode !== 'companion' || viewScope !== 'global' || areaMemoriesForAi.length === 0 || selectedAIs.length === 0) {
+                    if (!drawerOpen || exploreMode !== 'companion' || viewScope !== 'area' || areaMemoriesForAi.length === 0 || selectedAIs.length === 0) {
                         setAiResponses([]);
                         setAiLoading(false);
                         setAiError('');
@@ -1815,6 +1838,32 @@ import { CAMPUS_AREAS, DATE_MAX, DATE_MIN, MAP_HEIGHT, MAP_WIDTH, MAX_IMAGE_BYTE
                     } finally {
                         setChatLoading(false);
                     }
+                };
+
+                const cycleMemory = (direction) => {
+                    if (scopedMemories.length === 0) return;
+                    setActiveMemoryIndex(index => (index + direction + scopedMemories.length) % scopedMemories.length);
+                };
+
+                const renderCarouselImage = (mem, isPreview = false) => {
+                    const isFuture = (mem.seedType || mem.type) === 'future';
+                    const isSprouted = isFutureSeedSprouted(mem);
+                    if (mem.image && (!isFuture || isSprouted)) {
+                        return <img src={mem.image} className="w-full h-full object-cover" alt="Memory Attachment" />;
+                    }
+                    return (
+                        <div className="w-full h-full flex items-center justify-center bg-[radial-gradient(circle_at_50%_20%,rgba(125,211,252,0.22),rgba(15,23,42,0.42)_54%,rgba(0,0,0,0.22))]">
+                            {!isPreview && <ImageIcon className="w-10 h-10 text-white/35" />}
+                        </div>
+                    );
+                };
+
+                const renderCarouselBody = (mem) => {
+                    const isFuture = (mem.seedType || mem.type) === 'future';
+                    if (isFuture && !isFutureSeedSprouted(mem)) {
+                        return <p className={`text-sm leading-relaxed ${drawerSubTextClass}`}>这颗未来种子尚未萌发，暂时隐藏正文。</p>;
+                    }
+                    return <p className={`text-sm md:text-base leading-relaxed ${drawerTextClass}`}>{mem.text || mem.content || '这条记忆只有图像或标签。'}</p>;
                 };
 
                 const renderMemoryCard = (mem) => {
@@ -1934,10 +1983,12 @@ import { CAMPUS_AREAS, DATE_MAX, DATE_MIN, MAP_HEIGHT, MAP_WIDTH, MAX_IMAGE_BYTE
                                         )}
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-2 my-4">
-                                        <button onClick={() => setExploreMode('private')} className={`py-2 rounded-full text-sm border transition-colors cursor-pointer ${exploreMode === 'private' ? 'bg-white/20 border-white/40 ' + drawerTextClass : 'bg-black/10 border-white/10 ' + drawerSubTextClass}`}>秘密探索</button>
-                                        <button onClick={() => setExploreMode('companion')} className={`py-2 rounded-full text-sm border transition-colors cursor-pointer ${exploreMode === 'companion' ? 'bg-white/20 border-white/40 ' + drawerTextClass : 'bg-black/10 border-white/10 ' + drawerSubTextClass}`}>结伴探索</button>
-                                    </div>
+                                    {viewScope === 'area' && (
+                                        <div className="grid grid-cols-2 gap-2 my-4">
+                                            <button onClick={() => setExploreMode('private')} className={`py-2 rounded-full text-sm border transition-colors cursor-pointer ${exploreMode === 'private' ? 'bg-white/20 border-white/40 ' + drawerTextClass : 'bg-black/10 border-white/10 ' + drawerSubTextClass}`}>秘密探索</button>
+                                            <button onClick={() => setExploreMode('companion')} className={`py-2 rounded-full text-sm border transition-colors cursor-pointer ${exploreMode === 'companion' ? 'bg-white/20 border-white/40 ' + drawerTextClass : 'bg-black/10 border-white/10 ' + drawerSubTextClass}`}>结伴探索</button>
+                                        </div>
+                                    )}
 
                                     <div className="grid grid-cols-2 gap-2 mb-4">
                                         <div className="rounded-2xl bg-white/5 border border-white/10 p-3">
@@ -1950,7 +2001,7 @@ import { CAMPUS_AREAS, DATE_MAX, DATE_MIN, MAP_HEIGHT, MAP_WIDTH, MAX_IMAGE_BYTE
                                         </div>
                                     </div>
 
-                                    {exploreMode === 'companion' && (
+                                    {viewScope === 'area' && exploreMode === 'companion' && (
                                         <div>
                                             <p className={`text-sm mb-3 ${drawerSubTextClass}`}>结伴探索 (最多选 3 位)</p>
                                             <div className="grid grid-cols-1 gap-2">
@@ -1992,28 +2043,133 @@ import { CAMPUS_AREAS, DATE_MAX, DATE_MIN, MAP_HEIGHT, MAP_WIDTH, MAX_IMAGE_BYTE
                                         </div>
                                         <span className={`rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs ${drawerSubTextClass}`}>{viewScope === 'global' ? '全局' : '局部'}</span>
                                     </div>
-                                    <div className="flex-1 min-h-0 overflow-y-auto pr-2">
-                                        {scopedMemories.length === 0 ? (
-                                            <div className={`h-full min-h-[260px] rounded-2xl border border-dashed border-white/15 bg-white/5 p-8 text-center flex items-center justify-center ${drawerSubTextClass}`}>
+                                    {viewScope === 'global' ? (
+                                        scopedMemories.length === 0 ? (
+                                            <div className={`flex-1 min-h-[260px] rounded-2xl border border-dashed border-white/15 bg-white/5 p-8 text-center flex items-center justify-center ${drawerSubTextClass}`}>
                                                 这个范围还没有记忆。
                                             </div>
                                         ) : (
-                                            <div className="mx-auto grid w-full max-w-2xl grid-cols-1 gap-4">
-                                                {scopedMemories.map(renderMemoryCard)}
-                                            </div>
-                                        )}
-                                    </div>
+                                            <>
+                                                <div className="relative flex-1 min-h-[360px] flex items-center justify-center px-12 md:px-16">
+                                                    <button type="button" onClick={() => cycleMemory(-1)} className="absolute left-0 md:left-3 z-20 w-11 h-11 rounded-full border border-white/20 bg-black/25 text-white/80 hover:bg-white/15 hover:text-white transition-colors flex items-center justify-center cursor-pointer" title="上一条">
+                                                        <ChevronLeftIcon className="w-5 h-5" />
+                                                    </button>
+
+                                                    <div className="relative w-full max-w-[520px] h-[420px]">
+                                                        {stackedMemories.map((mem, layer) => {
+                                                            const side = layer % 2 === 0 ? -1 : 1;
+                                                            const depth = Math.floor(layer / 2) + 1;
+                                                            return (
+                                                                <div
+                                                                    key={`${mem.id}-stack-${layer}`}
+                                                                    aria-hidden="true"
+                                                                    className="absolute inset-0 rounded-[26px] overflow-hidden border border-white/15 bg-black/25 shadow-[0_20px_60px_rgba(0,0,0,0.25)]"
+                                                                    style={{
+                                                                        transform: `translateX(${side * (34 + depth * 22)}px) translateY(${depth * 8}px) rotate(${side * (5 + depth * 2)}deg) scale(${1 - depth * 0.045})`,
+                                                                        opacity: Math.max(0.22, 0.62 - layer * 0.09),
+                                                                        zIndex: 4 - layer
+                                                                    }}
+                                                                >
+                                                                    <div className="h-full opacity-65">{renderCarouselImage(mem, true)}</div>
+                                                                    <div className="absolute inset-0 bg-black/35"></div>
+                                                                </div>
+                                                            );
+                                                        })}
+
+                                                        <article className="absolute inset-0 z-10 rounded-[28px] overflow-hidden border border-white/25 bg-black/35 backdrop-blur-xl shadow-[0_24px_80px_rgba(0,0,0,0.42)]">
+                                                            <div className="h-[46%] border-b border-white/10 bg-black/20 overflow-hidden">{renderCarouselImage(activeMemory)}</div>
+                                                            <div className="h-[54%] p-5 md:p-6 flex flex-col">
+                                                                <div className="flex items-start justify-between gap-4 mb-3">
+                                                                    <div className="min-w-0">
+                                                                        <h3 className={`text-xl font-light truncate ${drawerTextClass}`}>{activeMemory.title || '未命名记忆'}</h3>
+                                                                        <div className={`mt-2 text-xs flex flex-wrap items-center gap-2 ${drawerSubTextClass}`}>
+                                                                            <span className="inline-flex items-center gap-1"><ClockIcon className="w-3 h-3" /> {formatSeedDate(getSeedDisplayDate(activeMemory))}</span>
+                                                                            <span className="inline-flex items-center gap-1"><CompassIcon className="w-3 h-3" /> {activeMemory.areaName || UNKNOWN_AREA.name}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <span className={`text-[10px] px-2 py-1 rounded-full bg-white/10 ${drawerSubTextClass}`}>
+                                                                        {(activeMemory.seedType || activeMemory.type) === 'future' ? (isFutureSeedSprouted(activeMemory) ? '已萌发' : '未来') : '记忆'}
+                                                                    </span>
+                                                                </div>
+
+                                                                {activeMemory.tags && activeMemory.tags.length > 0 && (
+                                                                    <div className="flex flex-wrap gap-1.5 mb-3">
+                                                                        {activeMemory.tags.map(t => <span key={t} className={`text-[10px] px-2 py-0.5 rounded border border-white/20 ${drawerSubTextClass}`}>{t}</span>)}
+                                                                    </div>
+                                                                )}
+
+                                                                <div className="min-h-0 overflow-y-auto pr-1">{renderCarouselBody(activeMemory)}</div>
+                                                            </div>
+                                                        </article>
+                                                    </div>
+
+                                                    <button type="button" onClick={() => cycleMemory(1)} className="absolute right-0 md:right-3 z-20 w-11 h-11 rounded-full border border-white/20 bg-black/25 text-white/80 hover:bg-white/15 hover:text-white transition-colors flex items-center justify-center cursor-pointer" title="下一条">
+                                                        <ChevronRightIcon className="w-5 h-5" />
+                                                    </button>
+                                                </div>
+
+                                                {scopedMemories.length > 1 && (
+                                                    <div className="mt-5 flex items-center justify-center gap-2">
+                                                        {scopedMemories.map((mem, index) => (
+                                                            <button key={`${mem.id}-dot`} type="button" onClick={() => setActiveMemoryIndex(index)} className={`h-1.5 rounded-full transition-all cursor-pointer ${index === currentIndex ? 'w-10 bg-white/75' : 'w-2 bg-white/25 hover:bg-white/45'}`} title={`第 ${index + 1} 条`} />
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </>
+                                        )
+                                    ) : (
+                                        <div className="flex-1 min-h-0 overflow-y-auto pr-2">
+                                            {scopedMemories.length === 0 ? (
+                                                <div className={`h-full min-h-[260px] rounded-2xl border border-dashed border-white/15 bg-white/5 p-8 text-center flex items-center justify-center ${drawerSubTextClass}`}>
+                                                    这个范围还没有记忆。
+                                                </div>
+                                            ) : (
+                                                <div className="mx-auto grid w-full max-w-2xl grid-cols-1 gap-4">
+                                                    {scopedMemories.map(renderMemoryCard)}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
                                 </main>
 
                                 <aside className="lg:min-h-0 lg:overflow-y-auto rounded-2xl border border-white/10 bg-black/10 p-4">
-                                    <p className={`text-xs mb-3 ${drawerSubTextClass}`}>开启与TA们的对话吧！</p>
-                                    {exploreMode === 'private' ? (
+                                    {viewScope === 'global' ? (
+                                        <div>
+                                            <div className="flex items-center justify-between gap-3 mb-4">
+                                                <div>
+                                                    <p className={`text-xs ${drawerSubTextClass}`}>记录索引</p>
+                                                    <h3 className={`text-base font-light ${drawerTextClass}`}>全局探索</h3>
+                                                </div>
+                                                <LeafIcon className="w-5 h-5 text-emerald-300/80" />
+                                            </div>
+                                            {scopedMemories.length === 0 ? (
+                                                <div className={`rounded-2xl border border-dashed border-white/10 bg-white/5 p-4 text-sm leading-relaxed ${drawerSubTextClass}`}>
+                                                    等待新的记忆在这里发芽。
+                                                </div>
+                                            ) : (
+                                                <div className="space-y-2">
+                                                    {scopedMemories.map((mem, index) => {
+                                                        const isActive = index === currentIndex;
+                                                        return (
+                                                            <button key={`${mem.id}-index`} type="button" onClick={() => setActiveMemoryIndex(index)} className={`w-full text-left rounded-2xl border p-3 transition-all cursor-pointer ${isActive ? 'bg-white/20 border-white/35 shadow-[0_0_18px_rgba(255,255,255,0.12)]' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
+                                                                <div className="flex items-start gap-3">
+                                                                    <div className={`w-8 h-8 rounded-full border flex items-center justify-center flex-shrink-0 ${isActive ? 'border-white/40 bg-white/15 text-white' : 'border-white/15 bg-black/15 text-white/60'}`}>
+                                                                        <span className="text-xs">{index + 1}</span>
+                                                                    </div>
+                                                                    <div className="min-w-0">
+                                                                        <p className={`text-sm truncate ${drawerTextClass}`}>{mem.title || '未命名记忆'}</p>
+                                                                        <p className={`mt-1 text-[10px] ${drawerSubTextClass}`}>{formatSeedDate(getSeedDisplayDate(mem))}</p>
+                                                                    </div>
+                                                                </div>
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ) : exploreMode === 'private' ? (
                                         <div className={`rounded-2xl border border-white/10 bg-white/5 p-4 text-sm leading-relaxed ${drawerTextClass}`}>
                                             秘密探索已开启。当前只展示你的记忆记录，不生成结伴解读。
-                                        </div>
-                                    ) : viewScope !== 'global' ? (
-                                        <div className={`rounded-2xl border border-white/10 bg-white/5 p-4 text-sm leading-relaxed ${drawerSubTextClass}`}>
-                                            局部查看专注记录本身，AI 解读只在全局概览中显示。
                                         </div>
                                     ) : (
                                         <div className="space-y-3">
@@ -2152,6 +2308,320 @@ import { CAMPUS_AREAS, DATE_MAX, DATE_MIN, MAP_HEIGHT, MAP_WIDTH, MAX_IMAGE_BYTE
                                                     </div>
                                                 </form>
                                             </div>
+                                        </div>
+                                    )}
+                                </aside>
+                            </div>
+                        </div>
+                    </>
+                );
+            };
+
+            const ExploreMemoryCarouselDrawer = () => {
+                const [viewScope, setViewScope] = useState('area');
+                const [selectedAreaId, setSelectedAreaId] = useState((CAMPUS_AREAS[0] || UNKNOWN_AREA).id);
+                const [activeMemoryIndex, setActiveMemoryIndex] = useState(0);
+                const [isAreaDropdownOpen, setIsAreaDropdownOpen] = useState(false);
+                const areaDropdownRef = useRef(null);
+                const areaOptions = [...CAMPUS_AREAS, UNKNOWN_AREA];
+                const stopDrawerEvent = (e) => e.stopPropagation();
+                const drawerTextClass = 'text-white';
+                const drawerSubTextClass = 'text-white/70';
+
+                const areaCounts = useMemo(() => {
+                    return memories.reduce((counts, mem) => {
+                        const key = mem.areaId || UNKNOWN_AREA.id;
+                        counts[key] = (counts[key] || 0) + 1;
+                        return counts;
+                    }, {});
+                }, [memories]);
+
+                const selectedArea = areaOptions.find(area => area.id === selectedAreaId) || UNKNOWN_AREA;
+                const scopedMemories = useMemo(() => {
+                    const list = viewScope === 'global'
+                        ? memories
+                        : memories.filter(mem => (mem.areaId || UNKNOWN_AREA.id) === selectedAreaId);
+                    return [...list].sort((a, b) => {
+                        const timeA = new Date(getSeedDisplayDate(a) || 0).getTime();
+                        const timeB = new Date(getSeedDisplayDate(b) || 0).getTime();
+                        return timeB - timeA;
+                    });
+                }, [memories, selectedAreaId, viewScope]);
+
+                const visibleAreaName = viewScope === 'global' ? '全局探索' : selectedArea.name;
+                const areaFocusLabel = viewScope === 'global' ? `关注：${selectedArea.name}` : selectedArea.name;
+                const currentIndex = scopedMemories.length ? activeMemoryIndex % scopedMemories.length : 0;
+                const activeMemory = scopedMemories[currentIndex];
+                const stackedMemories = scopedMemories.filter((_, index) => index !== currentIndex).slice(0, 5);
+                const stats = useMemo(() => {
+                    const tags = new Set(scopedMemories.flatMap(mem => Array.isArray(mem.tags) ? mem.tags : []));
+                    return {
+                        total: scopedMemories.length,
+                        future: scopedMemories.filter(mem => (mem.seedType || mem.type) === 'future').length,
+                        images: scopedMemories.filter(mem => mem.image).length,
+                        tags: tags.size
+                    };
+                }, [scopedMemories]);
+
+                useEffect(() => {
+                    const handleClickOutside = (event) => {
+                        if (areaDropdownRef.current && !areaDropdownRef.current.contains(event.target)) {
+                            setIsAreaDropdownOpen(false);
+                        }
+                    };
+                    document.addEventListener('mousedown', handleClickOutside);
+                    return () => document.removeEventListener('mousedown', handleClickOutside);
+                }, []);
+
+                useEffect(() => {
+                    if (!drawerOpen) {
+                        setIsAreaDropdownOpen(false);
+                        return;
+                    }
+                    const firstAreaWithMemory = areaOptions.find(area => areaCounts[area.id] > 0) || areaOptions[0] || UNKNOWN_AREA;
+                    if (!areaOptions.some(area => area.id === selectedAreaId)) setSelectedAreaId(firstAreaWithMemory.id);
+                }, [drawerOpen, selectedAreaId, areaCounts]);
+
+                useEffect(() => {
+                    setActiveMemoryIndex(0);
+                }, [viewScope, selectedAreaId, scopedMemories.length]);
+
+                const cycleMemory = (direction) => {
+                    if (scopedMemories.length === 0) return;
+                    setActiveMemoryIndex(index => (index + direction + scopedMemories.length) % scopedMemories.length);
+                };
+
+                const renderMemoryImage = (mem, isPreview = false) => {
+                    const isFuture = (mem.seedType || mem.type) === 'future';
+                    const isSprouted = isFutureSeedSprouted(mem);
+                    if (mem.image && (!isFuture || isSprouted)) {
+                        return <img src={mem.image} className="w-full h-full object-cover" alt="Memory Attachment" />;
+                    }
+                    return (
+                        <div className="w-full h-full flex items-center justify-center bg-[radial-gradient(circle_at_50%_20%,rgba(125,211,252,0.22),rgba(15,23,42,0.42)_54%,rgba(0,0,0,0.22))]">
+                            {!isPreview && <ImageIcon className="w-10 h-10 text-white/35" />}
+                        </div>
+                    );
+                };
+
+                const renderMemoryBody = (mem) => {
+                    const isFuture = (mem.seedType || mem.type) === 'future';
+                    if (isFuture && !isFutureSeedSprouted(mem)) {
+                        return <p className={`text-sm leading-relaxed ${drawerSubTextClass}`}>这颗未来种子尚未萌发，暂时隐藏正文。</p>;
+                    }
+                    return <p className={`text-sm md:text-base leading-relaxed ${drawerTextClass}`}>{mem.text || mem.content || '这条记忆只有图像或标签。'}</p>;
+                };
+
+                return (
+                    <>
+                        <style>{`
+                            .dropdown-slide { animation: dropdownFadeIn 0.2s ease-out; }
+                            @keyframes dropdownFadeIn {
+                                from { opacity: 0; transform: translateY(-8px); }
+                                to { opacity: 1; transform: translateY(0); }
+                            }
+                        `}</style>
+                        <div
+                            className={`fixed inset-y-4 left-4 right-4 mx-auto w-auto max-w-[1180px] z-40 ${glassClass} border border-white/20 rounded-[28px] p-6 md:p-8 flex flex-col drawer-premium shadow-[0_30px_90px_rgba(0,0,0,0.45)] ${drawerOpen ? 'translate-x-0 pointer-events-auto' : 'translate-x-[120vw] pointer-events-none'}`}
+                            onClick={stopDrawerEvent}
+                            onWheel={stopDrawerEvent}
+                            onMouseDown={stopDrawerEvent}
+                            onMouseMove={stopDrawerEvent}
+                            onMouseUp={stopDrawerEvent}
+                            onPointerDown={stopDrawerEvent}
+                            onPointerMove={stopDrawerEvent}
+                            onPointerUp={stopDrawerEvent}
+                            onContextMenu={stopDrawerEvent}
+                        >
+                            <div className={`flex justify-between items-center mb-6 content-stagger ${drawerOpen ? 'opacity-100 translate-x-0 delay-100' : 'opacity-0 translate-x-12'}`}>
+                                <div>
+                                    <h2 className={`text-2xl font-light ${drawerTextClass}`}>地块探索</h2>
+                                    <p className={`text-xs mt-1 ${drawerSubTextClass}`}>{visibleAreaName} · {areaFocusLabel} · {scopedMemories.length} 条记录</p>
+                                </div>
+                                <button onClick={() => setDrawerOpen(false)} className={`p-2 rounded-full hover:bg-white/10 ${drawerTextClass} transition-colors cursor-pointer`} title="关闭探索">
+                                    <XIcon className="w-6 h-6" />
+                                </button>
+                            </div>
+
+                            <div className={`grid grid-cols-1 lg:grid-cols-[250px_minmax(0,1fr)_250px] gap-5 flex-1 min-h-0 overflow-y-auto lg:overflow-hidden content-stagger ${drawerOpen ? 'opacity-100 translate-x-0 delay-200' : 'opacity-0 translate-x-12'}`}>
+                                <aside className="lg:min-h-0 lg:overflow-y-auto rounded-2xl border border-white/10 bg-black/10 p-4">
+                                    <div className="grid grid-cols-2 gap-2 mb-4">
+                                        <button onClick={() => setViewScope('global')} className={`py-2 rounded-full text-sm border transition-colors cursor-pointer ${viewScope === 'global' ? 'bg-white/20 border-white/40 ' + drawerTextClass : 'bg-black/10 border-white/10 ' + drawerSubTextClass}`}>全局</button>
+                                        <button onClick={() => setViewScope('area')} className={`py-2 rounded-full text-sm border transition-colors cursor-pointer ${viewScope === 'area' ? 'bg-white/20 border-white/40 ' + drawerTextClass : 'bg-black/10 border-white/10 ' + drawerSubTextClass}`}>局部</button>
+                                    </div>
+
+                                    <div className="relative" ref={areaDropdownRef}>
+                                        <button
+                                            type="button"
+                                            onClick={() => setIsAreaDropdownOpen(open => !open)}
+                                            className={`w-full bg-black/30 backdrop-blur-sm border border-white/20 rounded-2xl px-4 py-3 pr-4 outline-none cursor-pointer flex items-center justify-between gap-3 ${drawerTextClass} focus:ring-2 focus:ring-white/50 transition-all`}
+                                        >
+                                            <span className="truncate">{selectedArea.name} ({areaCounts[selectedArea.id] || 0})</span>
+                                            <ChevronRightIcon className={`w-4 h-4 flex-shrink-0 transition-transform ${isAreaDropdownOpen ? 'rotate-90' : ''}`} />
+                                        </button>
+
+                                        {isAreaDropdownOpen && (
+                                            <div className="absolute left-0 right-0 mt-2 z-50 bg-[rgba(90,90,82,0.85)] border border-[rgba(169,169,159,0.5)] rounded-xl shadow-[0_0_8px_rgba(169,169,159,0.25)] backdrop-blur-sm overflow-hidden dropdown-slide">
+                                                {areaOptions.map(area => (
+                                                    <button
+                                                        key={area.id}
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setSelectedAreaId(area.id);
+                                                            setIsAreaDropdownOpen(false);
+                                                        }}
+                                                        className={`w-full px-4 py-3 text-left hover:bg-white/20 transition-colors flex items-center justify-between gap-3 ${selectedAreaId === area.id ? 'bg-white/30 text-white' : drawerTextClass}`}
+                                                    >
+                                                        <span className="truncate">{area.name}</span>
+                                                        <span className="text-xs text-white/60 flex-shrink-0">{areaCounts[area.id] || 0} 条</span>
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-2 my-4">
+                                        <div className="rounded-2xl bg-white/5 border border-white/10 p-3">
+                                            <p className={`text-[10px] ${drawerSubTextClass}`}>记录</p>
+                                            <p className={`text-xl font-light ${drawerTextClass}`}>{stats.total}</p>
+                                        </div>
+                                        <div className="rounded-2xl bg-white/5 border border-white/10 p-3">
+                                            <p className={`text-[10px] ${drawerSubTextClass}`}>未来</p>
+                                            <p className={`text-xl font-light ${drawerTextClass}`}>{stats.future}</p>
+                                        </div>
+                                        <div className="rounded-2xl bg-white/5 border border-white/10 p-3">
+                                            <p className={`text-[10px] ${drawerSubTextClass}`}>图像</p>
+                                            <p className={`text-xl font-light ${drawerTextClass}`}>{stats.images}</p>
+                                        </div>
+                                        <div className="rounded-2xl bg-white/5 border border-white/10 p-3">
+                                            <p className={`text-[10px] ${drawerSubTextClass}`}>标签</p>
+                                            <p className={`text-xl font-light ${drawerTextClass}`}>{stats.tags}</p>
+                                        </div>
+                                    </div>
+
+                                    {activeMemory && (
+                                        <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                            <p className={`text-[10px] mb-2 ${drawerSubTextClass}`}>当前</p>
+                                            <p className={`text-sm font-medium ${drawerTextClass}`}>{currentIndex + 1} / {scopedMemories.length}</p>
+                                            <p className={`mt-2 text-xs leading-relaxed ${drawerSubTextClass}`}>{activeMemory.title || '未命名记忆'}</p>
+                                        </div>
+                                    )}
+                                </aside>
+
+                                <main className="min-h-[440px] lg:min-h-0 overflow-hidden rounded-2xl border border-white/10 bg-black/10 p-4 md:p-5 flex flex-col">
+                                    <div className="mb-5 flex items-center justify-between gap-3">
+                                        <div>
+                                            <p className={`text-xs ${drawerSubTextClass}`}>记忆记录</p>
+                                            <h3 className={`text-lg font-light ${drawerTextClass}`}>{visibleAreaName}</h3>
+                                            {viewScope === 'global' && <p className={`text-xs mt-1 ${drawerSubTextClass}`}>{areaFocusLabel}</p>}
+                                        </div>
+                                        <span className={`rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs ${drawerSubTextClass}`}>{viewScope === 'global' ? '全局' : '局部'}</span>
+                                    </div>
+
+                                    {scopedMemories.length === 0 ? (
+                                        <div className={`flex-1 min-h-[260px] rounded-2xl border border-dashed border-white/15 bg-white/5 p-8 text-center flex items-center justify-center ${drawerSubTextClass}`}>
+                                            这个范围还没有记忆。
+                                        </div>
+                                    ) : (
+                                        <div className="relative flex-1 min-h-[360px] flex items-center justify-center px-12 md:px-16">
+                                            <button type="button" onClick={() => cycleMemory(-1)} className="absolute left-0 md:left-3 z-20 w-11 h-11 rounded-full border border-white/20 bg-black/25 text-white/80 hover:bg-white/15 hover:text-white transition-colors flex items-center justify-center cursor-pointer" title="上一条">
+                                                <ChevronLeftIcon className="w-5 h-5" />
+                                            </button>
+
+                                            <div className="relative w-full max-w-[520px] h-[420px]">
+                                                {stackedMemories.map((mem, layer) => {
+                                                    const side = layer % 2 === 0 ? -1 : 1;
+                                                    const depth = Math.floor(layer / 2) + 1;
+                                                    return (
+                                                        <div
+                                                            key={`${mem.id}-stack-${layer}`}
+                                                            aria-hidden="true"
+                                                            className="absolute inset-0 rounded-[26px] overflow-hidden border border-white/15 bg-black/25 shadow-[0_20px_60px_rgba(0,0,0,0.25)]"
+                                                            style={{
+                                                                transform: `translateX(${side * (34 + depth * 22)}px) translateY(${depth * 8}px) rotate(${side * (5 + depth * 2)}deg) scale(${1 - depth * 0.045})`,
+                                                                opacity: Math.max(0.22, 0.62 - layer * 0.09),
+                                                                zIndex: 4 - layer
+                                                            }}
+                                                        >
+                                                            <div className="h-full opacity-65">{renderMemoryImage(mem, true)}</div>
+                                                            <div className="absolute inset-0 bg-black/35"></div>
+                                                        </div>
+                                                    );
+                                                })}
+
+                                                <article className="absolute inset-0 z-10 rounded-[28px] overflow-hidden border border-white/25 bg-black/35 backdrop-blur-xl shadow-[0_24px_80px_rgba(0,0,0,0.42)]">
+                                                    <div className="h-[46%] border-b border-white/10 bg-black/20 overflow-hidden">{renderMemoryImage(activeMemory)}</div>
+                                                    <div className="h-[54%] p-5 md:p-6 flex flex-col">
+                                                        <div className="flex items-start justify-between gap-4 mb-3">
+                                                            <div className="min-w-0">
+                                                                <h3 className={`text-xl font-light truncate ${drawerTextClass}`}>{activeMemory.title || '未命名记忆'}</h3>
+                                                                <div className={`mt-2 text-xs flex flex-wrap items-center gap-2 ${drawerSubTextClass}`}>
+                                                                    <span className="inline-flex items-center gap-1"><ClockIcon className="w-3 h-3" /> {formatSeedDate(getSeedDisplayDate(activeMemory))}</span>
+                                                                    <span className="inline-flex items-center gap-1"><CompassIcon className="w-3 h-3" /> {activeMemory.areaName || UNKNOWN_AREA.name}</span>
+                                                                </div>
+                                                            </div>
+                                                            <span className={`text-[10px] px-2 py-1 rounded-full bg-white/10 ${drawerSubTextClass}`}>
+                                                                {(activeMemory.seedType || activeMemory.type) === 'future' ? (isFutureSeedSprouted(activeMemory) ? '已萌发' : '未来') : '记忆'}
+                                                            </span>
+                                                        </div>
+
+                                                        {activeMemory.tags && activeMemory.tags.length > 0 && (
+                                                            <div className="flex flex-wrap gap-1.5 mb-3">
+                                                                {activeMemory.tags.map(t => <span key={t} className={`text-[10px] px-2 py-0.5 rounded border border-white/20 ${drawerSubTextClass}`}>{t}</span>)}
+                                                            </div>
+                                                        )}
+
+                                                        <div className="min-h-0 overflow-y-auto pr-1">{renderMemoryBody(activeMemory)}</div>
+                                                    </div>
+                                                </article>
+                                            </div>
+
+                                            <button type="button" onClick={() => cycleMemory(1)} className="absolute right-0 md:right-3 z-20 w-11 h-11 rounded-full border border-white/20 bg-black/25 text-white/80 hover:bg-white/15 hover:text-white transition-colors flex items-center justify-center cursor-pointer" title="下一条">
+                                                <ChevronRightIcon className="w-5 h-5" />
+                                            </button>
+                                        </div>
+                                    )}
+
+                                    {scopedMemories.length > 1 && (
+                                        <div className="mt-5 flex items-center justify-center gap-2">
+                                            {scopedMemories.map((mem, index) => (
+                                                <button key={`${mem.id}-dot`} type="button" onClick={() => setActiveMemoryIndex(index)} className={`h-1.5 rounded-full transition-all cursor-pointer ${index === currentIndex ? 'w-10 bg-white/75' : 'w-2 bg-white/25 hover:bg-white/45'}`} title={`第 ${index + 1} 条`} />
+                                            ))}
+                                        </div>
+                                    )}
+                                </main>
+
+                                <aside className="lg:min-h-0 lg:overflow-y-auto rounded-2xl border border-white/10 bg-black/10 p-4">
+                                    <div className="flex items-center justify-between gap-3 mb-4">
+                                        <div>
+                                            <p className={`text-xs ${drawerSubTextClass}`}>记录索引</p>
+                                            <h3 className={`text-base font-light ${drawerTextClass}`}>{visibleAreaName}</h3>
+                                        </div>
+                                        <LeafIcon className="w-5 h-5 text-emerald-300/80" />
+                                    </div>
+
+                                    {scopedMemories.length === 0 ? (
+                                        <div className={`rounded-2xl border border-dashed border-white/10 bg-white/5 p-4 text-sm leading-relaxed ${drawerSubTextClass}`}>
+                                            等待新的记忆在这里发芽。
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-2">
+                                            {scopedMemories.map((mem, index) => {
+                                                const isActive = index === currentIndex;
+                                                return (
+                                                    <button key={`${mem.id}-index`} type="button" onClick={() => setActiveMemoryIndex(index)} className={`w-full text-left rounded-2xl border p-3 transition-all cursor-pointer ${isActive ? 'bg-white/20 border-white/35 shadow-[0_0_18px_rgba(255,255,255,0.12)]' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
+                                                        <div className="flex items-start gap-3">
+                                                            <div className={`w-8 h-8 rounded-full border flex items-center justify-center flex-shrink-0 ${isActive ? 'border-white/40 bg-white/15 text-white' : 'border-white/15 bg-black/15 text-white/60'}`}>
+                                                                <span className="text-xs">{index + 1}</span>
+                                                            </div>
+                                                            <div className="min-w-0">
+                                                                <p className={`text-sm truncate ${drawerTextClass}`}>{mem.title || '未命名记忆'}</p>
+                                                                <p className={`mt-1 text-[10px] ${drawerSubTextClass}`}>{formatSeedDate(getSeedDisplayDate(mem))}</p>
+                                                            </div>
+                                                        </div>
+                                                    </button>
+                                                );
+                                            })}
                                         </div>
                                     )}
                                 </aside>
